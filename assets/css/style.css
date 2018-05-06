@@ -1,0 +1,33 @@
+body {
+    background-color: rgb(124,124,124);
+    
+}
+h2, table{
+    font-family: 'Roboto Mono', monospace;
+}
+h2{
+    /* width: 70%;
+    margin:20px; */
+    padding: 40px;
+    border: solid;
+    border-width: 5px;
+    border-color: rgb(210,0,20);
+}
+#timeleft{
+    font-family: 'Press Start 2P', cursive;
+}
+.str-btn{
+background-color: rgb(210,0,20);
+color: white;
+align-self: center;
+margin: 20px;
+}
+
+.table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
+    background-color: rgb(210,0,20);
+    color:  white;
+}
+#gameinfo, #questionDiv{
+    margin: 20px;
+}
+
