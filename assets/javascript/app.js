@@ -1,4 +1,4 @@
-var questions=[
+var questions = [
     {
         question: "What year was the Nintendo Entertainment Console released in North American?",
         answers: [
@@ -11,7 +11,8 @@ var questions=[
         answers: [
             "Duck Hunt", "The Legend of Zelda", "Super Mario Bros.", "Metroid"
         ],
-        correct: "Super Mario Bros."
+        correct: "Super Mario Bros.",
+        winImage: "assets/images/win1.gif"
     },
     {
         question: "what is the high score for the game tetris?",
@@ -26,7 +27,7 @@ var questions=[
             "Bible Adventures", "Deadly Towers", "Gilligan's Island", "Barbie"
         ],
         correct: "Barbie"
-        },
+    },
     {
         question: "What is the hardest game for the NES",
         answers: [
@@ -36,68 +37,114 @@ var questions=[
     }]
 
 
-var gameIsOn = false;
-var tbody=$("tbody");
+
+var tbody = $("tbody");
 var questionNumber = 0;
-var thead=$("thead");
+var thead = $("thead");
 var questionTime = 30;
 var questionInterId;
-var betweenQuestionInterId;
+var interludeInterId;
+var interludeTime = 5;
+var qDiv = $("#questionDiv");
+var correctCount=0;
+var incorrectCount=0;
+var timeoutCount=0;
 
 
 
-function questionTimeStart(){
+
+function questionTimeStart() {
     clearInterval(questionInterId);
     questionInterId = setInterval(decrement, 1000);
 }
-function decrement(){
+function decrement() {
     questionTime--;
     $("#gameinfo").text("Time Remaing: " + questionTime + " Seconds");
-    if (questionTime === 0){
+    if (questionTime === 0) {
         stopTime(questionInterId);
         $("#gameinfo").text("Time's Up!");
+        timeoutCount++;
+        poorlyAnswered();
     }
 }
-function stopTime(interval){
+function stopTime(interval) {
     clearInterval(interval);
 }
 
-$("#startbutton").on("click", function(){
+$("#startbutton").on("click", function () {
     startGame();
     this.remove();
 })
 
-function startGame(){
-    gameIsOn = true;
+function startGame() {
     nextQuestion(questionNumber);
-    $("#gameinfo").text("Time Remaing: " + questionTime + " Seconds");
+    
 }
-function nextQuestion(number){
+function nextQuestion(number) {
+    questionTime=30;
+    $("#question").empty();
+    $("#gameinfo").text("Time Remaing: " + questionTime + " Seconds");
     questionTimeStart();
     var questionDiv = $("<div>");
     questionDiv.attr("id", "questionDiv")
-    var questionH =$("<h3>");
-        questionH.text(questions[number]["question"]);
-        console.log(questions[number].question);
-        questionH.appendTo(questionDiv);
-        $("#question").append(questionDiv);
-        for(options in questions[number].answers){
-            var answerRow = $("<tr>");
-            var answerTD = $("<td>");
-            answerTD.addClass("align-middle");
-            answerTD.text(questions[number].answers[options]);
-            answerTD.appendTo(answerRow);
-            console.log("answer: " + questions[number].answers[options]);
-            tbody.append(answerRow);
-        }
+    var questionH = $("<h3>");
+    questionH.text(questions[number]["question"]);
+    console.log(questions[number].question);
+    questionH.appendTo(questionDiv);
+    $("#question").append(questionDiv);
+    for (options in questions[number].answers) {
+        var answerRow = $("<tr>");
+        var answerTD = $("<td>");
+        answerTD.addClass("align-middle");
+        answerTD.text(questions[number].answers[options]);
+        answerTD.appendTo(answerRow);
+        console.log("answer: " + questions[number].answers[options]);
+        tbody.append(answerRow);
+    }
 
 }
-$("body").on("click", "#answertable tr td", function(){
+$("body").on("click", "#answertable tr td", function () {
     console.log("This was clicked: " + this.innerHTML);
     console.log("Question Number: " + questionNumber)
-    if(this.innerHTML == questions[questionNumber]["correct"]){
+    if (this.innerHTML == questions[questionNumber]["correct"]) {
         console.log("correct answer");
-        questionNumber++;
-        nextQuestion(questionNumber);
+        correctlyAnswered();
+        stopTime(questionInterId);
+        $("#gameinfo").text("");
+        correctCount++;
+    }
+    else{
+        stopTime(questionInterId);
+        incorrectCount++;
+        poorlyAnswered();
+
     }
 })
+function correctlyAnswered() {
+    var imageStr = "assets/images/win"+questionNumber+".gif";
+    console.log("winImage: " + imageStr)
+    tbody.empty();
+    $("#questionDiv").empty();
+    $("#questionDiv").html("Correct!<br>");
+    var image = $("<img>");
+    image.attr("src", imageStr)//.attr("width", 500).attr("height", 375);
+    image.appendTo($("#questionDiv"));
+    questionNumber++;
+    setTimeout(function(){
+        $("#questionDiv").empty();
+        nextQuestion(questionNumber)
+    }, 5000);
+}
+function poorlyAnswered(){
+    tbody.empty();
+    $("#questionDiv").empty();
+    $("#questionDiv").innerHTML=("DING DONG YA WRONG!<br>");
+    var image = $("<img>");
+    image.attr("src", "assets/images/lose2.gif");
+    image.appendTo($("#questionDiv"));
+    questionNumber++;
+    setTimeout(function(){
+        $("#questionDiv").empty();
+        nextQuestion(questionNumber)
+    }, 5000);
+}

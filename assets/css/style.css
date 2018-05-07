@@ -6,14 +6,14 @@ h2, table{
     font-family: 'Roboto Mono', monospace;
 }
 h2{
-    /* width: 70%;
-    margin:20px; */
+    /* width: 70%; */
+    margin-top:20px; 
     padding: 40px;
     border: solid;
     border-width: 5px;
     border-color: rgb(210,0,20);
 }
-#timeleft{
+#gameinfo, #questionDiv, .str-btn {
     font-family: 'Press Start 2P', cursive;
 }
 .str-btn{
@@ -25,6 +25,7 @@ margin: 20px;
 
 .table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
     background-color: rgb(210,0,20);
+    font-family: 'Press Start 2P', cursive;
     color:  white;
 }
 #gameinfo, #questionDiv{
