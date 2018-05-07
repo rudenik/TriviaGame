@@ -71,16 +71,46 @@ function stopTime(interval) {
     clearInterval(interval);
 }
 
-$("#startbutton").on("click", function () {
+$("#startbutton").on("click",  function () {
     startGame();
     this.remove();
+})
+$("#question").on("click", "#restartbutton", function(){
+    console.log("restart clicked");
+    $("#gameinfo").empty();
+    $("#question").empty();
+    this.remove();
+    questionNumber = 0;
+    startGame();
 })
 
 function startGame() {
     nextQuestion(questionNumber);
     
 }
+
 function nextQuestion(number) {
+    // console.log("Question Number, next Question() : " + number + "QN" + questionNumber);
+    // console.log("questions.length: " + questions.length);
+    if(questionNumber >= 1/*questions.length*/){
+        console.log("end game splash");
+        stopTime(questionInterId);
+        $("#gameinfo").empty();
+        $("#gameinfo").text("That's it, here's how you did!");
+        $("#question").empty();
+        $("#question").html("Correctly Answered: " + correctCount + "<br>" +
+                             "Answered Incorrectly: " + incorrectCount + "<br>" +
+                             "Question Time Outs: " + timeoutCount + "<br>" +
+                             "Would you like to play again?"
+                            );
+        var restartButton = $("<button>");
+        restartButton.text("Start Over?");
+        restartButton.addClass("btn str-btn");
+        restartButton.attr("id", "restartbutton");
+        $("#question").append(restartButton);                  
+
+
+    } else {
     questionTime=30;
     $("#question").empty();
     $("#gameinfo").text("Time Remaing: " + questionTime + " Seconds");
@@ -89,7 +119,6 @@ function nextQuestion(number) {
     questionDiv.attr("id", "questionDiv")
     var questionH = $("<h3>");
     questionH.text(questions[number]["question"]);
-    console.log(questions[number].question);
     questionH.appendTo(questionDiv);
     $("#question").append(questionDiv);
     for (options in questions[number].answers) {
@@ -98,14 +127,12 @@ function nextQuestion(number) {
         answerTD.addClass("align-middle");
         answerTD.text(questions[number].answers[options]);
         answerTD.appendTo(answerRow);
-        console.log("answer: " + questions[number].answers[options]);
         tbody.append(answerRow);
     }
+}
 
 }
 $("body").on("click", "#answertable tr td", function () {
-    console.log("This was clicked: " + this.innerHTML);
-    console.log("Question Number: " + questionNumber)
     if (this.innerHTML == questions[questionNumber]["correct"]) {
         console.log("correct answer");
         correctlyAnswered();
@@ -122,12 +149,11 @@ $("body").on("click", "#answertable tr td", function () {
 })
 function correctlyAnswered() {
     var imageStr = "assets/images/win"+questionNumber+".gif";
-    console.log("winImage: " + imageStr)
     tbody.empty();
     $("#questionDiv").empty();
     $("#questionDiv").html("Correct!<br>");
     var image = $("<img>");
-    image.attr("src", imageStr)//.attr("width", 500).attr("height", 375);
+    image.attr("src", imageStr);
     image.appendTo($("#questionDiv"));
     questionNumber++;
     setTimeout(function(){
@@ -138,7 +164,7 @@ function correctlyAnswered() {
 function poorlyAnswered(){
     tbody.empty();
     $("#questionDiv").empty();
-    $("#questionDiv").innerHTML=("DING DONG YA WRONG!<br>");
+    $("#questionDiv").html("DING DONG YA WRONG!<br>The Correct Answer is " + questions[questionNumber].correct + "<br>");
     var image = $("<img>");
     image.attr("src", "assets/images/lose2.gif");
     image.appendTo($("#questionDiv"));
