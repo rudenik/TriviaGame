@@ -15,7 +15,7 @@ var questions = [
         winImage: "assets/images/win1.gif"
     },
     {
-        question: "what is the high score for the game tetris?",
+        question: "what is the highest score for the game Tetris?",
         answers: [
             "999, 999", "1, 000, 000", "723, 083", "443, 220"
         ],
@@ -87,7 +87,6 @@ $("#startbutton").on("click", function () {
 })
 
 $("#question").on("click", "#restartbutton", function () {
-    console.log("restart clicked");
     $("#gameinfo").empty();
     $("#question").empty();
     this.remove();
@@ -102,7 +101,6 @@ $("#question").on("click", "#restartbutton", function () {
 $("body").on("click", "#answertable tr td", function () {
     playAudio("click.wav");
     if (this.innerHTML == questions[questionNumber]["correct"]) {
-        console.log("correct answer");
         stopTime(questionInterId);
         setTimeout(function () {
             playAudio("correct.wav");
@@ -124,7 +122,6 @@ $("body").on("click", "#answertable tr td", function () {
 
 function nextQuestion(number) {
     if (questionNumber >= questions.length) {
-        console.log("end game splash");
         stopTime(questionInterId);
         playAudio("gamefinished.wav");
         $("#gameinfo").empty();
