@@ -82,7 +82,7 @@ function startGame() {
 
 $("#startbutton").on("click", function () {
     startGame();
-    playAudio("gamestart.wav");
+    playAudio("gamestart.mp3");
     this.remove();
 })
 
@@ -94,16 +94,16 @@ $("#question").on("click", "#restartbutton", function () {
     incorrectCount = 0;
     timeoutCount = 0;
     questionNumber = 0;
-    playAudio("restart.wav");
+    playAudio("restart.mp3");
     startGame();
 })
 
 $("body").on("click", "#answertable tr td", function () {
-    playAudio("click.wav");
+    playAudio("click.mp3");
     if (this.innerHTML == questions[questionNumber]["correct"]) {
         stopTime(questionInterId);
         setTimeout(function () {
-            playAudio("correct.wav");
+            playAudio("correct.mp3");
             correctlyAnswered();
             $("#gameinfo").text("");
             correctCount++;
@@ -112,7 +112,7 @@ $("body").on("click", "#answertable tr td", function () {
     else {
         stopTime(questionInterId);
         setTimeout(function () {
-            playAudio("incorrect.wav");
+            playAudio("incorrect.mp3");
             incorrectCount++;
             poorlyAnswered();
         }, 500);
@@ -123,7 +123,7 @@ $("body").on("click", "#answertable tr td", function () {
 function nextQuestion(number) {
     if (questionNumber >= questions.length) {
         stopTime(questionInterId);
-        playAudio("gamefinished.wav");
+        playAudio("gamefinished.mp3");
         $("#gameinfo").empty();
         $("#gameinfo").text("That's it, here's how you did!");
         $("#question").empty();
@@ -205,7 +205,7 @@ function decrement() {
         stopTime(questionInterId);
         $("#gameinfo").text("Time's Up!");
         timeoutCount++;
-        playAudio("timesup.wav");
+        playAudio("timesup.mp3");
         poorlyAnswered();
     }
 }
