@@ -6,7 +6,6 @@ h2, table{
     font-family: 'Roboto Mono', monospace;
 }
 h2{
-    /* width: 70%; */
     margin-top:20px; 
     padding: 40px;
     border: solid;
@@ -17,7 +16,7 @@ h2{
 h5{
     margin-top: 20px;
     font-family: 'Roboto Mono', monospace;
-    /* font-family: 'Roboto Mono', monospace; */
+    
 }
 #gameinfo, #questionDiv, .str-btn {
     font-family: 'Press Start 2P', cursive;
