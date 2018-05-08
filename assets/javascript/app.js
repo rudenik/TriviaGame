@@ -22,11 +22,32 @@ var questions = [
         correct: "999, 999"
     },
     {
-        question: "What is the worst selling game for the Nintendo Entertainment System",
+        question: "Which of the following games did Mario creator Shigeru Miyamoto NOT design?",
         answers: [
-            "Bible Adventures", "Deadly Towers", "Gilligan's Island", "Barbie"
+            "Donkey Kong", "Kid Icarus", "Excitebike", "The Legend of Zelda"
         ],
-        correct: "Barbie"
+        correct: "Kid Icarus"
+    },
+    {
+        question: "What is the first Nintendo game to feature Mario in it?",
+        answers: [
+            "Tennis", "Mario Bros.", "Donkey Kong", "Wrecking Crew"
+        ],
+        correct: "Donkey Kong"
+    },
+    {
+        question: "Which film inspired the enemies in Nintendo's Metroid series?",
+        answers: [
+            "Star Wars", "Galaxy of Terror", "Predator", "Alien"
+        ],
+        correct: "Alien"
+    },
+    {
+        question: "What was the first NES game to use the 'Konami Code'?",
+        answers: [
+            "Contra", "Life Force", "Gradius", "R-Type"
+        ],
+        correct: "Gradius"
     },
     {
         question: "What is the hardest game for the NES",
@@ -46,109 +67,105 @@ var questionInterId;
 var interludeInterId;
 var interludeTime = 5;
 var qDiv = $("#questionDiv");
-var correctCount=0;
-var incorrectCount=0;
-var timeoutCount=0;
+var correctCount = 0;
+var incorrectCount = 0;
+var timeoutCount = 0;
+var audio;
 
 
 
 
-function questionTimeStart() {
-    clearInterval(questionInterId);
-    questionInterId = setInterval(decrement, 1000);
-}
-function decrement() {
-    questionTime--;
-    $("#gameinfo").text("Time Remaing: " + questionTime + " Seconds");
-    if (questionTime === 0) {
-        stopTime(questionInterId);
-        $("#gameinfo").text("Time's Up!");
-        timeoutCount++;
-        poorlyAnswered();
-    }
-}
-function stopTime(interval) {
-    clearInterval(interval);
+function startGame() {
+    nextQuestion(questionNumber);
+
 }
 
-$("#startbutton").on("click",  function () {
+$("#startbutton").on("click", function () {
     startGame();
+    playAudio("gamestart.wav");
     this.remove();
 })
-$("#question").on("click", "#restartbutton", function(){
+
+$("#question").on("click", "#restartbutton", function () {
     console.log("restart clicked");
     $("#gameinfo").empty();
     $("#question").empty();
     this.remove();
+    correctCount = 0;
+    incorrectCount = 0;
+    timeoutCount = 0;
     questionNumber = 0;
+    playAudio("restart.wav");
     startGame();
 })
 
-function startGame() {
-    nextQuestion(questionNumber);
-    
-}
+$("body").on("click", "#answertable tr td", function () {
+    playAudio("click.wav");
+    if (this.innerHTML == questions[questionNumber]["correct"]) {
+        console.log("correct answer");
+        stopTime(questionInterId);
+        setTimeout(function () {
+            playAudio("correct.wav");
+            correctlyAnswered();
+            $("#gameinfo").text("");
+            correctCount++;
+        }, 500);
+    }
+    else {
+        stopTime(questionInterId);
+        setTimeout(function () {
+            playAudio("incorrect.wav");
+            incorrectCount++;
+            poorlyAnswered();
+        }, 500);
+    }
+});
+
 
 function nextQuestion(number) {
-    // console.log("Question Number, next Question() : " + number + "QN" + questionNumber);
-    // console.log("questions.length: " + questions.length);
-    if(questionNumber >= 1/*questions.length*/){
+    if (questionNumber >= questions.length) {
         console.log("end game splash");
         stopTime(questionInterId);
+        playAudio("gamefinished.wav");
         $("#gameinfo").empty();
         $("#gameinfo").text("That's it, here's how you did!");
         $("#question").empty();
-        $("#question").html("Correctly Answered: " + correctCount + "<br>" +
-                             "Answered Incorrectly: " + incorrectCount + "<br>" +
-                             "Question Time Outs: " + timeoutCount + "<br>" +
-                             "Would you like to play again?"
-                            );
+        $("#question").html("<h5> Correctly Answered: " + correctCount + "<br>" +
+            "Answered Incorrectly: " + incorrectCount + "<br>" +
+            "Question Time Outs: " + timeoutCount + "<br><br>" +
+            "Would you like to play again?<br></h5>"
+        );
         var restartButton = $("<button>");
         restartButton.text("Start Over?");
         restartButton.addClass("btn str-btn");
         restartButton.attr("id", "restartbutton");
-        $("#question").append(restartButton);                  
-
-
+        $("#question").append(restartButton);
     } else {
-    questionTime=30;
-    $("#question").empty();
-    $("#gameinfo").text("Time Remaing: " + questionTime + " Seconds");
-    questionTimeStart();
-    var questionDiv = $("<div>");
-    questionDiv.attr("id", "questionDiv")
-    var questionH = $("<h3>");
-    questionH.text(questions[number]["question"]);
-    questionH.appendTo(questionDiv);
-    $("#question").append(questionDiv);
-    for (options in questions[number].answers) {
-        var answerRow = $("<tr>");
-        var answerTD = $("<td>");
-        answerTD.addClass("align-middle");
-        answerTD.text(questions[number].answers[options]);
-        answerTD.appendTo(answerRow);
-        tbody.append(answerRow);
+        questionTime = 30;
+        $("#question").empty();
+        $("#gameinfo").text("Time Remaing: " + questionTime + " Seconds");
+        questionTimeStart();
+        var questionDiv = $("<div>");
+        questionDiv.attr("id", "questionDiv")
+        var questionH = $("<h3>");
+        questionH.text(questions[number]["question"]);
+        questionH.appendTo(questionDiv);
+        $("#question").append(questionDiv);
+        shuffleArray(questions[number].answers);
+        for (options in questions[number].answers) {
+            var answerRow = $("<tr>");
+            var answerTD = $("<td>");
+            answerTD.addClass("align-middle");
+            answerTD.text(questions[number].answers[options]);
+            answerTD.appendTo(answerRow);
+            tbody.append(answerRow);
+        }
     }
 }
 
-}
-$("body").on("click", "#answertable tr td", function () {
-    if (this.innerHTML == questions[questionNumber]["correct"]) {
-        console.log("correct answer");
-        correctlyAnswered();
-        stopTime(questionInterId);
-        $("#gameinfo").text("");
-        correctCount++;
-    }
-    else{
-        stopTime(questionInterId);
-        incorrectCount++;
-        poorlyAnswered();
 
-    }
-})
 function correctlyAnswered() {
-    var imageStr = "assets/images/win"+questionNumber+".gif";
+    var imageStr = "assets/images/win" + questionNumber + ".gif";
     tbody.empty();
     $("#questionDiv").empty();
     $("#questionDiv").html("Correct!<br>");
@@ -156,21 +173,58 @@ function correctlyAnswered() {
     image.attr("src", imageStr);
     image.appendTo($("#questionDiv"));
     questionNumber++;
-    setTimeout(function(){
+    setTimeout(function () {
         $("#questionDiv").empty();
         nextQuestion(questionNumber)
     }, 5000);
 }
-function poorlyAnswered(){
+function poorlyAnswered() {
     tbody.empty();
     $("#questionDiv").empty();
-    $("#questionDiv").html("DING DONG YA WRONG!<br>The Correct Answer is " + questions[questionNumber].correct + "<br>");
+    $("#questionDiv").html("DING DONG YA WRONG!<br>The Correct Answer is " + questions[questionNumber].correct + "<br><br>");
     var image = $("<img>");
-    image.attr("src", "assets/images/lose2.gif");
+    image.attr("src", "assets/images/lose2.gif").attr("height", 288).attr("width", 384);
     image.appendTo($("#questionDiv"));
     questionNumber++;
-    setTimeout(function(){
+    setTimeout(function () {
         $("#questionDiv").empty();
         nextQuestion(questionNumber)
     }, 5000);
+}
+
+function questionTimeStart() {
+    clearInterval(questionInterId);
+    questionInterId = setInterval(decrement, 1000);
+}
+
+function stopTime(interval) {
+    clearInterval(interval);
+}
+
+function decrement() {
+    questionTime--;
+    $("#gameinfo").text("Time Remaing: " + questionTime + " Seconds");
+    if (questionTime === 0) {
+        stopTime(questionInterId);
+        $("#gameinfo").text("Time's Up!");
+        timeoutCount++;
+        playAudio("timesup.wav");
+        poorlyAnswered();
+    }
+}
+
+function playAudio(audioFile) {
+    audio = new Audio("assets/audio/" + audioFile);
+    audio.play();
+}
+
+function shuffleArray(a) {
+    var j, x, i;
+    for (i = a.length - 1; i > 0; i--) {
+        j = Math.floor(Math.random() * (i + 1));
+        x = a[i];
+        a[i] = a[j];
+        a[j] = x;
+    }
+    return a;
 }

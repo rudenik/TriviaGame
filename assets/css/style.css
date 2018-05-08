@@ -12,9 +12,21 @@ h2{
     border: solid;
     border-width: 5px;
     border-color: rgb(210,0,20);
+    background-color: rgb(188,188,188);
+}
+h5{
+    margin-top: 20px;
+    font-family: 'Roboto Mono', monospace;
+    /* font-family: 'Roboto Mono', monospace; */
 }
 #gameinfo, #questionDiv, .str-btn {
     font-family: 'Press Start 2P', cursive;
+}
+#question{
+    background-color: rgb(188,188,188);
+}
+div#question.col.text-center{
+    margin: 15px 15px 49px 15px;
 }
 .str-btn{
 background-color: rgb(210,0,20);
